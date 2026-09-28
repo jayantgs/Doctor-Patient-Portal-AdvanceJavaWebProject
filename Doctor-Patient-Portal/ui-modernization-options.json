@@ -1,0 +1,46 @@
+{
+    "modernizationPaths": [
+        {
+            "frontend": "React",
+            "backend": "JEE",
+            "description": "Migrate JSP views to a React SPA consuming a new Java EE REST layer. Existing JDBC DAOs are wrapped behind JAX-RS endpoints while the backend stays on the same JEE stack, minimising backend disruption and keeping the modernization focused on the user interface.",
+            "riskAssessment": "Medium",
+            "keyTechnicalChallenges": "Replace server-rendered JSP scriptlets with React components calling REST APIs; convert HTML form posts to JSON fetch/XHR requests; migrate session-scoped authentication to stateless JWT or cookie-based API security; expose DAO query results as JSON endpoints; rebuild Bootstrap UI as componentized React."
+        },
+        {
+            "frontend": "Vue.js",
+            "backend": "JEE",
+            "description": "Replace JSP views with a Vue.js SPA backed by Java EE REST endpoints. Vue's HTML-based template syntax eases migration from JSTL and JSP tags, and keeping the backend on JEE limits re-platforming risk.",
+            "riskAssessment": "Medium",
+            "keyTechnicalChallenges": "Transform JSP scriptlet markup and JSTL loops into Vue templates with reactive data; wrap DAO calls behind JAX-RS JSON endpoints; migrate session-based login to API token security; preserve three-role navbar logic in Vue router guards; rebuild forms with Vue two-way binding and validation."
+        },
+        {
+            "frontend": "Angular",
+            "backend": "JEE",
+            "description": "Build an Angular SPA in TypeScript consuming Java EE REST endpoints. Backend remains on familiar JEE, but the introduction of Angular's strict toolchain and TypeScript raises the frontend effort.",
+            "riskAssessment": "High",
+            "keyTechnicalChallenges": "Rewrite JSP views as Angular components with TypeScript and RxJS; expose DAO logic through JAX-RS JSON endpoints; migrate session-scoped auth to JWT with role guards for admin/doctor/user; implement dependency injection and reactive forms; restructure build to npm/Angular CLI alongside Maven backend."
+        },
+        {
+            "frontend": "React",
+            "backend": "Quarkus",
+            "description": "Re-platform the backend to Quarkus using JAX-RS and Panache or Hibernate while building the frontend in React. Delivers a cloud-native reactive stack but requires both a full backend and frontend rewrite.",
+            "riskAssessment": "High",
+            "keyTechnicalChallenges": "Migrate Servlet/JDBC DAOs to Quarkus JAX-RS and Panache entities; convert single static Connection to Quarkus Agroal pooling; reimplement sixteen servlet endpoints as REST resources; convert session auth to bearer-token JWT; rebuild JSP UI as React SPA with role-based routing; update build/deploy to container image."
+        },
+        {
+            "frontend": "Vue.js",
+            "backend": "Quarkus",
+            "description": "Modernise both layers: Quarkus backend with JAX-RS/Panache and a Vue.js frontend. Cloud-native and fast to start, but demands a full backend re-platform alongside the UI rewrite.",
+            "riskAssessment": "High",
+            "keyTechnicalChallenges": "Port Servlet/JDBC DAOs to Quarkus JAX-RS and Panache with Agroal pooling; convert static Connection handling to CDI-managed datasources; reimplement all servlet URLs as REST resources; switch session auth to JWT bearer tokens; rebuild JSP UI as Vue SPA with role-based navigation."
+        },
+        {
+            "frontend": "Angular",
+            "backend": "Quarkus",
+            "description": "Full re-platform to a cloud-native stack: Quarkus microservices backend with JAX-RS/Panache plus an Angular TypeScript SPA. Maximum modernization benefit but the highest disruption and risk.",
+            "riskAssessment": "Very High",
+            "keyTechnicalChallenges": "Migrate all Servlet/JDBC DAOs to Quarkus JAX-RS and Panache with Agroal datasource pooling; reimplement sixteen servlet flows as REST resources; replace session auth with JWT bearer tokens and role-based guards; rebuild JSP UI as Angular TypeScript components with RxJS; overhaul CI/CD to build container images for both tiers."
+        }
+    ]
+}

@@ -1,0 +1,210 @@
+flowchart TD
+    %% ===================== CLASS DEFINITIONS =====================
+    classDef viewLayer fill:#001141,stroke:#4589ff,stroke-width:2px,color:#ffffff
+    classDef controllerLayer fill:#081a1c,stroke:#009d9a,stroke-width:2px,color:#ffffff
+    classDef modelLayer fill:#2a0a18,stroke:#ee5396,stroke-width:2px,color:#ffffff
+
+    %% ===================== VIEW / UI LAYER =====================
+    subgraph view["View / UI Layer - JSP pages, forms, components"]
+        IndexPage["index.jsp"]
+        SignupPage["signup.jsp"]
+        UserLoginPage["user_login.jsp"]
+        DoctorLoginPage["doctor_login.jsp"]
+        AdminLoginPage["admin_login.jsp"]
+        UserAppointmentPage["user_appointment.jsp"]
+        ViewAppointmentPage["view_appointment.jsp"]
+        ChangePasswordPage["change_password.jsp"]
+        DoctorIndexPage["doctor/index.jsp"]
+        DoctorPatientPage["doctor/patient.jsp"]
+        DoctorCommentPage["doctor/comment.jsp"]
+        DoctorEditProfilePage["doctor/edit_profile.jsp"]
+        AdminIndexPage["admin/index.jsp"]
+        AdminDoctorPage["admin/doctor.jsp"]
+        AdminViewDoctorPage["admin/view_doctor.jsp"]
+        AdminEditDoctorPage["admin/edit_doctor.jsp"]
+        AdminPatientPage["admin/patient.jsp"]
+
+        UserRegisterForm["User Register Form"]
+        UserLoginForm["User Login Form"]
+        DoctorLoginForm["Doctor Login Form"]
+        AdminLoginForm["Admin Login Form"]
+        AppointmentForm["Appointment Form"]
+        ChangePasswordForm["Change Password Form"]
+        DoctorCommentForm["Doctor Comment Form"]
+        DoctorEditProfileForm["Doctor Edit Profile Form"]
+        SpecialistForm["Add Specialist Form"]
+
+        NavbarUser["component/navbar.jsp"]
+        NavbarDoctor["doctor/navbar.jsp"]
+        NavbarAdmin["admin/navbar.jsp"]
+        AllCssComponent["component/allcss.jsp"]
+        FooterComponent["component/footer.jsp"]
+    end
+
+    %% ===================== CONTROLLER / SERVICE LAYER =====================
+    subgraph controller["Controller / Service Layer - HttpServlet controllers"]
+        UserRegisterServlet["UserRegisterServlet"]
+        UserLoginServlet["UserLoginServlet"]
+        UserLogoutServlet["UserLogoutServlet"]
+        ChangePasswordServlet["ChangePasswordServlet"]
+        AppointmentServlet["AppointmentServlet"]
+        DoctorLoginServlet["DoctorLoginServlet"]
+        DoctorLogoutServlet["DoctorLogoutServlet"]
+        DoctorEditProfileServlet["DoctorEditProfileServlet"]
+        DoctorChangePasswordServlet["DoctorChangePassword"]
+        UpdateStatusServlet["UpdateStatus"]
+        AdminLoginServlet["AdminLoginServlet"]
+        AdminLogoutServlet["AdminLogoutServlet"]
+        DoctorServlet["DoctorServlet addDoctor"]
+        UpdateDoctorServlet["UpdateDoctorServlet"]
+        DeleteDoctorServlet["DeleteDoctorServlet"]
+        SpecialistServlet["SpecialistServlet"]
+        HttpSessionStore["HttpSession - userObj / doctorObj / adminObj"]
+    end
+
+    %% ===================== MODEL / DATA LAYER =====================
+    subgraph model["Model / Data Layer - DAOs, entities, database"]
+        DBConnection["DBConnection - JDBC DriverManager"]
+        UserDAO["UserDAO"]
+        DoctorDAO["DoctorDAO"]
+        AppointmentDAO["AppointmentDAO"]
+        SpecialistDAO["SpecialistDAO"]
+        UserEntity["User entity"]
+        DoctorEntity["Doctor entity"]
+        AppointmentEntity["Appointment entity"]
+        SpecialistEntity["Specialist entity"]
+        DatabaseMySQL["Database MySQL hospital"]
+    end
+
+    %% ===================== SHARED DATA-ACCESS PATTERN =====================
+    UserDAO -->|getConnection| DBConnection
+    DoctorDAO -->|getConnection| DBConnection
+    AppointmentDAO -->|getConnection| DBConnection
+    SpecialistDAO -->|getConnection| DBConnection
+    DBConnection -->|JDBC| DatabaseMySQL
+    UserEntity <-->|user_details| DatabaseMySQL
+    DoctorEntity <-->|doctor| DatabaseMySQL
+    AppointmentEntity <-->|appointment| DatabaseMySQL
+    SpecialistEntity <-->|specialist| DatabaseMySQL
+
+    %% ===================== FLOW A: User Registration =====================
+    SignupPage -->|renders| NavbarUser
+    SignupPage -->|uses| AllCssComponent
+    SignupPage -->|uses| FooterComponent
+    SignupPage --> UserRegisterForm
+    UserRegisterForm -- POST /user_register --> UserRegisterServlet
+    UserRegisterServlet -->|UserDAO.userRegister| UserDAO
+    UserRegisterServlet -->|msg success/error| HttpSessionStore
+    UserRegisterServlet -->|redirect| SignupPage
+    UserDAO -->|new User| UserEntity
+    UserDAO -->|SELECT| DatabaseMySQL
+
+    %% ===================== FLOW B: Authentication - all roles =====================
+    UserLoginPage --> UserLoginForm
+    UserLoginForm -- POST /userLogin --> UserLoginServlet
+    UserLoginServlet -->|loginUser email password| UserDAO
+    UserLoginServlet -->|set userObj| HttpSessionStore
+    UserLoginServlet -->|redirect index.jsp| IndexPage
+
+    DoctorLoginPage --> DoctorLoginForm
+    DoctorLoginForm -- POST /doctorLogin --> DoctorLoginServlet
+    DoctorLoginServlet -->|loginDoctor email password| DoctorDAO
+    DoctorLoginServlet -->|set doctorObj| HttpSessionStore
+    DoctorLoginServlet -->|redirect doctor/index.jsp| DoctorIndexPage
+
+    AdminLoginPage --> AdminLoginForm
+    AdminLoginForm -- POST /adminLogin --> AdminLoginServlet
+    AdminLoginServlet -->|hardcoded check admin@gmail.com| HttpSessionStore
+    AdminLoginServlet -->|redirect admin/index.jsp| AdminIndexPage
+
+    NavbarUser -->|link /userLogout| UserLogoutServlet
+    NavbarDoctor -->|link /doctorLogout| DoctorLogoutServlet
+    NavbarAdmin -->|link /adminLogout| AdminLogoutServlet
+    UserLogoutServlet -->|remove userObj| HttpSessionStore
+    DoctorLogoutServlet -->|remove doctorObj| HttpSessionStore
+    AdminLogoutServlet -->|remove adminObj| HttpSessionStore
+    UserLogoutServlet -->|redirect user_login.jsp| UserLoginPage
+    DoctorLogoutServlet -->|redirect doctor_login.jsp| DoctorLoginPage
+    AdminLogoutServlet -->|redirect admin_login.jsp| AdminLoginPage
+
+    %% ===================== FLOW C: Appointment booking =====================
+    UserAppointmentPage -->|guard userObj| HttpSessionStore
+    UserAppointmentPage -->|renders doctor select| DoctorDAO
+    UserAppointmentPage --> AppointmentForm
+    AppointmentForm -- POST /addAppointment --> AppointmentServlet
+    AppointmentServlet -->|addAppointment status=Pending| AppointmentDAO
+    AppointmentServlet -->|msg + redirect| HttpSessionStore
+    AppointmentServlet -->|redirect user_appointment.jsp| UserAppointmentPage
+    AppointmentDAO -->|new Appointment| AppointmentEntity
+
+    %% ===================== FLOW D: View own appointment =====================
+    ViewAppointmentPage -->|guard userObj| HttpSessionStore
+    ViewAppointmentPage -->|getAllAppointmentByLoginUser| AppointmentDAO
+    ViewAppointmentPage -->|getDoctorById join| DoctorDAO
+    AppointmentDAO -->|result list| ViewAppointmentPage
+    DoctorDAO -->|Doctor entity| DoctorEntity
+
+    %% ===================== FLOW E: Change password =====================
+    ChangePasswordPage --> ChangePasswordForm
+    ChangePasswordForm -- POST /userChangePassword --> ChangePasswordServlet
+    ChangePasswordServlet -->|checkOldPassword + changePassword| UserDAO
+    ChangePasswordServlet -->|msg + redirect| HttpSessionStore
+    ChangePasswordServlet -->|redirect change_password.jsp| ChangePasswordPage
+
+    %% ===================== FLOW F: Doctor comment / status =====================
+    DoctorPatientPage -->|guard doctorObj| HttpSessionStore
+    DoctorPatientPage -->|getAllAppointmentByLoginDoctor| AppointmentDAO
+    DoctorPatientPage -->|link| DoctorCommentPage
+    DoctorCommentPage -->|getAppointmentById| AppointmentDAO
+    DoctorCommentPage --> DoctorCommentForm
+    DoctorCommentForm -- POST /updateStatus --> UpdateStatusServlet
+    UpdateStatusServlet -->|updateDrAppointmentCommentStatus| AppointmentDAO
+    UpdateStatusServlet -->|msg + redirect| HttpSessionStore
+    UpdateStatusServlet -->|redirect doctor/patient.jsp| DoctorPatientPage
+
+    %% ===================== FLOW G: Doctor profile / password =====================
+    DoctorEditProfilePage -->|guard doctorObj| HttpSessionStore
+    DoctorEditProfilePage -->|prefill from doctorObj| HttpSessionStore
+    DoctorEditProfilePage -->|load specialists| SpecialistDAO
+    DoctorEditProfilePage --> DoctorEditProfileForm
+    DoctorEditProfileForm -- POST /doctorEditProfile --> DoctorEditProfileServlet
+    DoctorEditProfileServlet -->|editDoctorProfile| DoctorDAO
+    DoctorEditProfileServlet -->|refresh doctorObj| HttpSessionStore
+    DoctorEditProfileServlet -->|redirect doctor/edit_profile.jsp| DoctorEditProfilePage
+    DoctorEditProfilePage --> ChangePasswordForm
+    ChangePasswordForm -- POST /doctorChangePassword --> DoctorChangePasswordServlet
+    DoctorChangePasswordServlet -->|checkOldPassword + changePassword| DoctorDAO
+    DoctorChangePasswordServlet -->|msg + redirect| HttpSessionStore
+    DoctorChangePasswordServlet -->|redirect doctor/edit_profile.jsp| DoctorEditProfilePage
+
+    %% ===================== FLOW H: Admin dashboard =====================
+    AdminIndexPage -->|countTotalDoctor etc| DoctorDAO
+    AdminIndexPage -->|add specialist modal| SpecialistForm
+    SpecialistForm -- POST /addSpecialist --> SpecialistServlet
+    SpecialistServlet -->|addSpecialist| SpecialistDAO
+    SpecialistServlet -->|msg + redirect| HttpSessionStore
+    SpecialistServlet -->|redirect admin/index.jsp| AdminIndexPage
+    AdminDoctorPage -->|POST /addDoctor| DoctorServlet
+    DoctorServlet -->|registerDoctor| DoctorDAO
+    DoctorServlet -->|msg + redirect| HttpSessionStore
+    DoctorServlet -->|redirect admin/doctor.jsp| AdminDoctorPage
+    AdminViewDoctorPage -->|getAllDoctor| DoctorDAO
+    AdminViewDoctorPage -->|edit link| AdminEditDoctorPage
+    AdminEditDoctorPage -->|getDoctorById| DoctorDAO
+    AdminEditDoctorPage -->|POST /updateDoctor| UpdateDoctorServlet
+    UpdateDoctorServlet -->|updateDoctor| DoctorDAO
+    UpdateDoctorServlet -->|msg + redirect| HttpSessionStore
+    UpdateDoctorServlet -->|redirect admin/view_doctor.jsp| AdminViewDoctorPage
+    AdminViewDoctorPage -->|GET /deleteDoctor?id| DeleteDoctorServlet
+    DeleteDoctorServlet -->|deleteDoctorById| DoctorDAO
+    DeleteDoctorServlet -->|msg + redirect| HttpSessionStore
+    DeleteDoctorServlet -->|redirect admin/view_doctor.jsp| AdminViewDoctorPage
+    AdminPatientPage -->|getAllAppointment| AppointmentDAO
+    AdminPatientPage -->|getDoctorById join| DoctorDAO
+
+    %% ===================== LAYER CLASS ASSIGNMENT =====================
+    class IndexPage,SignupPage,UserLoginPage,DoctorLoginPage,AdminLoginPage,UserAppointmentPage,ViewAppointmentPage,ChangePasswordPage,DoctorIndexPage,DoctorPatientPage,DoctorCommentPage,DoctorEditProfilePage,AdminIndexPage,AdminDoctorPage,AdminViewDoctorPage,AdminEditDoctorPage,AdminPatientPage,UserRegisterForm,UserLoginForm,DoctorLoginForm,AdminLoginForm,AppointmentForm,ChangePasswordForm,DoctorCommentForm,DoctorEditProfileForm,SpecialistForm,NavbarUser,NavbarDoctor,NavbarAdmin,AllCssComponent,FooterComponent viewLayer
+
+    class UserRegisterServlet,UserLoginServlet,UserLogoutServlet,ChangePasswordServlet,AppointmentServlet,DoctorLoginServlet,DoctorLogoutServlet,DoctorEditProfileServlet,DoctorChangePasswordServlet,UpdateStatusServlet,AdminLoginServlet,AdminLogoutServlet,DoctorServlet,UpdateDoctorServlet,DeleteDoctorServlet,SpecialistServlet,HttpSessionStore controllerLayer
+
+    class DBConnection,UserDAO,DoctorDAO,AppointmentDAO,SpecialistDAO,UserEntity,DoctorEntity,AppointmentEntity,SpecialistEntity,DatabaseMySQL modelLayer
