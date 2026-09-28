@@ -1,0 +1,25 @@
+# =========================================================================
+# Maven Specific
+# =========================================================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+pom.xml.bak
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+
+# Keep the Maven Wrapper jar but ignore general wrapper runtime caches if any
+! .mvn/wrapper/maven-wrapper.jar
+
+# =========================================================================
+# Compiled Java Files
+# =========================================================================
+*.class
+*.jar
+*.war
+*.nar
+*.ear
