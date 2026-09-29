@@ -1,0 +1,46 @@
+{
+    "modernizationPaths": [
+        {
+            "frontend": "React",
+            "backend": "JEE",
+            "description": "Migrate JSP to React SPA with existing Servlet/JEE backend converted to REST APIs. Keep Servlet container (Tomcat), convert servlets to JAX-RS resources, reuse DAO/entity layer. Deploy React build as static resources in WAR.",
+            "riskAssessment": "Medium",
+            "keyTechnicalChallenges": "Converting scriptlet-heavy JSPs to React components; REST API design from action-based servlets; Session-to-JWT auth migration; Stateful servlet session sharing with SPA; Build pipeline for WAR with embedded React"
+        },
+        {
+            "frontend": "Vue.js",
+            "backend": "JEE",
+            "description": "Replace JSP with Vue.js SPA while retaining JEE backend as REST services. Vue's progressive adoption allows incremental migration. Convert servlets to JAX-RS, reuse DAO/JPA layer. Deploy Vue dist in WAR.",
+            "riskAssessment": "Medium",
+            "keyTechnicalChallenges": "Incremental JSP-to-Vue component migration strategy; REST endpoint parity with servlet forwards/redirects; CSRF protection for Vue forms; Session management bridge; Shared WAR build configuration"
+        },
+        {
+            "frontend": "Angular",
+            "backend": "JEE",
+            "description": "Full Angular SPA with JEE REST backend. Angular's opinionated structure suits enterprise migration. Convert servlets to JAX-RS controllers, keep EJB/CDI if present. Angular CLI build output served as static WAR content.",
+            "riskAssessment": "High",
+            "keyTechnicalChallenges": "Steep Angular learning curve for JSP developers; Complete rewrite of view layer; RxJS state management vs session attributes; Complex WAR build with Angular CLI; Type-safe API contracts from dynamic JSP scriptlets"
+        },
+        {
+            "frontend": "React",
+            "backend": "Quarkus",
+            "description": "Full stack modernization to React + Quarkus. Migrate servlets to Quarkus REST endpoints (JAX-RS compatible), JPA/Hibernate for DAOs, native compilation support. Separate deployments: React on CDN/nginx, Quarkus as microservice.",
+            "riskAssessment": "Very High",
+            "keyTechnicalChallenges": "Complete architectural redesign to microservices; Quarkus extension mapping for all JEE APIs; Database connection pool migration (Agroal); Native image compatibility for reflection-heavy DAOs; Separate CI/CD for frontend/backend; Distributed auth (OIDC/Keycloak)"
+        },
+        {
+            "frontend": "Vue.js",
+            "backend": "Quarkus",
+            "description": "Modernize to Vue.js frontend with Quarkus backend. Vue's flexibility pairs well with Quarkus dev mode. Migrate servlets to Quarkus REST, use Panache for active record pattern. Independent deployments.",
+            "riskAssessment": "Very High",
+            "keyTechnicalChallenges": "Full stack rewrite with two new frameworks; Quarkus reactive vs blocking DAO migration; Vue 3 Composition API adoption; Cross-origin deployment complexity; Auth system replacement; Testing strategy for decoupled architecture"
+        },
+        {
+            "frontend": "Angular",
+            "backend": "Quarkus",
+            "description": "Enterprise-grade Angular + Quarkus modernization. Leverage Quarkus dev services for DB, Angular for strict typing. Full microservice architecture with shared OpenAPI contracts. Best for long-term maintainability.",
+            "riskAssessment": "Very High",
+            "keyTechnicalChallenges": "Highest complexity: two opinionated frameworks; OpenAPI schema generation from legacy servlets; Angular-Quarkus type sharing; Native compilation constraints; Team upskilling for both; Observability/distributed tracing setup"
+        }
+    ]
+}

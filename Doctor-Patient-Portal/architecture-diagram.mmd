@@ -1,0 +1,166 @@
+```mermaid
+flowchart TD
+classDef viewLayer fill:#001141,stroke:#4589ff,stroke-width:2px,color:#ffffff
+classDef controllerLayer fill:#081a1c,stroke:#009d9a,stroke-width:2px,color:#ffffff
+classDef modelLayer fill:#2a0a18,stroke:#ee5396,stroke-width:2px,color:#ffffff
+
+subgraph view["View/UI Layer"]
+    indexJSP["index.jsp"]:::viewLayer
+    userLoginJSP["user_login.jsp"]:::viewLayer
+    signupJSP["signup.jsp"]:::viewLayer
+    userAppointmentJSP["user_appointment.jsp"]:::viewLayer
+    viewAppointmentJSP["view_appointment.jsp"]:::viewLayer
+    changePasswordJSP["change_password.jsp"]:::viewLayer
+    doctorLoginJSP["doctor_login.jsp"]:::viewLayer
+    doctorIndexJSP["doctor/index.jsp"]:::viewLayer
+    doctorPatientJSP["doctor/patient.jsp"]:::viewLayer
+    doctorCommentJSP["doctor/comment.jsp"]:::viewLayer
+    doctorEditProfileJSP["doctor/edit_profile.jsp"]:::viewLayer
+    adminLoginJSP["admin_login.jsp"]:::viewLayer
+    adminIndexJSP["admin/index.jsp"]:::viewLayer
+    adminDoctorJSP["admin/doctor.jsp"]:::viewLayer
+    adminViewDoctorJSP["admin/view_doctor.jsp"]:::viewLayer
+    adminEditDoctorJSP["admin/edit_doctor.jsp"]:::viewLayer
+    adminPatientJSP["admin/patient.jsp"]:::viewLayer
+    navbarJSP["component/navbar.jsp"]:::viewLayer
+    adminNavbarJSP["admin/navbar.jsp"]:::viewLayer
+    doctorNavbarJSP["doctor/navbar.jsp"]:::viewLayer
+    allcssJSP["component/allcss.jsp"]:::viewLayer
+    footerJSP["component/footer.jsp"]:::viewLayer
+end
+
+subgraph controller["Controller/Service Layer"]
+    userLoginServlet["UserLoginServlet\n/userLogin"]:::controllerLayer
+    userRegisterServlet["UserRegisterServlet\n/user_register"]:::controllerLayer
+    userLogoutServlet["UserLogoutServlet\n/userLogout"]:::controllerLayer
+    appointmentServlet["AppointmentServlet\n/addAppointment"]:::controllerLayer
+    changePasswordServlet["ChangePasswordServlet\n/userChangePassword"]:::controllerLayer
+    doctorLoginServlet["DoctorLoginServlet\n/doctorLogin"]:::controllerLayer
+    doctorLogoutServlet["DoctorLogoutServlet\n/doctorLogout"]:::controllerLayer
+    doctorEditProfileServlet["DoctorEditProfileServlet\n/doctorEditProfile"]:::controllerLayer
+    doctorChangePasswordServlet["DoctorChangePassword\n/doctorChangePassword"]:::controllerLayer
+    updateStatusServlet["UpdateStatus\n/updateStatus"]:::controllerLayer
+    adminLoginServlet["AdminLoginServlet\n/adminLogin"]:::controllerLayer
+    adminLogoutServlet["AdminLogoutServlet\n/adminLogout"]:::controllerLayer
+    doctorServlet["DoctorServlet\n/addDoctor"]:::controllerLayer
+    updateDoctorServlet["UpdateDoctorServlet\n/updateDoctor"]:::controllerLayer
+    deleteDoctorServlet["DeleteDoctorServlet\n/deleteDoctor"]:::controllerLayer
+    specialistServlet["SpecialistServlet\n/addSpecialist"]:::controllerLayer
+    myNewServlet["MyNewServlet\n/MyNewServletRegisterUser"]:::controllerLayer
+    myUserServlet["myuserServlet\n/myuserServlet"]:::controllerLayer
+end
+
+subgraph model["Model/Data Layer"]
+    userEntity["User Entity"]:::modelLayer
+    doctorEntity["Doctor Entity"]:::modelLayer
+    appointmentEntity["Appointment Entity"]:::modelLayer
+    specialistEntity["Specialist Entity"]:::modelLayer
+    userDAO["UserDAO"]:::modelLayer
+    doctorDAO["DoctorDAO"]:::modelLayer
+    appointmentDAO["AppointmentDAO"]:::modelLayer
+    specialistDAO["SpecialistDAO"]:::modelLayer
+    dbConnection["DBConnection\nSingleton"]:::modelLayer
+    database[("MySQL Database\nhospital")]:::modelLayer
+end
+
+indexJSP --> navbarJSP
+indexJSP --> footerJSP
+userLoginJSP --> navbarJSP
+signupJSP --> navbarJSP
+userAppointmentJSP --> navbarJSP
+viewAppointmentJSP --> navbarJSP
+changePasswordJSP --> navbarJSP
+doctorLoginJSP --> navbarJSP
+doctorIndexJSP --> doctorNavbarJSP
+doctorPatientJSP --> doctorNavbarJSP
+doctorCommentJSP --> doctorNavbarJSP
+doctorEditProfileJSP --> doctorNavbarJSP
+adminLoginJSP --> navbarJSP
+adminIndexJSP --> adminNavbarJSP
+adminDoctorJSP --> adminNavbarJSP
+adminViewDoctorJSP --> adminNavbarJSP
+adminEditDoctorJSP --> adminNavbarJSP
+adminPatientJSP --> adminNavbarJSP
+
+userLoginJSP --> userLoginServlet
+signupJSP --> userRegisterServlet
+userAppointmentJSP --> appointmentServlet
+viewAppointmentJSP --> appointmentDAO
+viewAppointmentJSP --> doctorDAO
+changePasswordJSP --> changePasswordServlet
+doctorLoginJSP --> doctorLoginServlet
+doctorPatientJSP --> appointmentDAO
+doctorCommentJSP --> appointmentDAO
+doctorCommentJSP --> updateStatusServlet
+doctorEditProfileJSP --> doctorEditProfileServlet
+doctorEditProfileJSP --> doctorChangePasswordServlet
+doctorEditProfileJSP --> specialistDAO
+adminLoginJSP --> adminLoginServlet
+adminIndexJSP --> doctorDAO
+adminDoctorJSP --> specialistDAO
+adminDoctorJSP --> doctorServlet
+adminViewDoctorJSP --> doctorDAO
+adminEditDoctorJSP --> doctorDAO
+adminEditDoctorJSP --> specialistDAO
+adminEditDoctorJSP --> updateDoctorServlet
+adminPatientJSP --> appointmentDAO
+adminPatientJSP --> doctorDAO
+
+userLoginServlet --> userDAO
+userRegisterServlet --> userDAO
+userLogoutServlet --> userDAO
+appointmentServlet --> appointmentDAO
+changePasswordServlet --> userDAO
+doctorLoginServlet --> doctorDAO
+doctorLogoutServlet --> doctorDAO
+doctorEditProfileServlet --> doctorDAO
+doctorChangePasswordServlet --> doctorDAO
+updateStatusServlet --> appointmentDAO
+adminLoginServlet --> userEntity
+doctorServlet --> doctorDAO
+updateDoctorServlet --> doctorDAO
+deleteDoctorServlet --> doctorDAO
+specialistServlet --> specialistDAO
+
+userDAO --> userEntity
+userDAO --> dbConnection
+doctorDAO --> doctorEntity
+doctorDAO --> dbConnection
+appointmentDAO --> appointmentEntity
+appointmentDAO --> dbConnection
+specialistDAO --> specialistEntity
+specialistDAO --> dbConnection
+dbConnection --> database
+
+userEntity --> userDAO
+doctorEntity --> doctorDAO
+appointmentEntity --> appointmentDAO
+specialistEntity --> specialistDAO
+database --> dbConnection
+
+userLoginServlet --> userLoginJSP
+userLoginServlet --> indexJSP
+userRegisterServlet --> signupJSP
+userLogoutServlet --> userLoginJSP
+appointmentServlet --> userAppointmentJSP
+changePasswordServlet --> changePasswordJSP
+doctorLoginServlet --> doctorLoginJSP
+doctorLoginServlet --> doctorIndexJSP
+doctorLogoutServlet --> doctorLoginJSP
+doctorEditProfileServlet --> doctorEditProfileJSP
+doctorChangePasswordServlet --> doctorEditProfileJSP
+updateStatusServlet --> doctorPatientJSP
+adminLoginServlet --> adminLoginJSP
+adminLoginServlet --> adminIndexJSP
+adminLogoutServlet --> adminLoginJSP
+doctorServlet --> adminDoctorJSP
+updateDoctorServlet --> adminViewDoctorJSP
+deleteDoctorServlet --> adminViewDoctorJSP
+specialistServlet --> adminIndexJSP
+
+subgraph legend["Legend"]
+    viewExample["View/UI Components"]:::viewLayer
+    controllerExample["Controller/Service Components"]:::controllerLayer
+    modelExample["Model/Data Components"]:::modelLayer
+end
+```
